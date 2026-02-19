@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: redis_jwt
+  # 가상 스레드 활성화 (java 21)
+  threads:
+    virtual:
+      enabled: true
+  # Redis 설정
+  data:
+    redis:
+      host: 192.168.1.4
+      port: 6379
+      # password: 비밀번호가 있다면 입력
+
+      # 연결 라이브러리 상세 설정 
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 2
+        shutdown-timeout: 100ms
+
+logging:
+  level:
+    org.springframework.data.redis: DEBUG
+
+# JWT 커스텀 설정
+jwt:
+  # HS256 알고리즘을 사용하려면 최소 32자 이상의 랜덤 문자열이 필요합니다.
+  secret: dHOYarqkfZUTVR70mjgMgPRWIL56x4PM7qjBrc7lhnV
+  access-token-expiration: 3600000 # 1시간 (밀리초 단위)
+  refresh-token-expiration: 604800000 # 7일
