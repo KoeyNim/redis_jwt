@@ -23,6 +23,7 @@ spring:
 logging:
   level:
     org.springframework.data.redis: DEBUG
+    org.springframework.security: DEBUG
 
 # JWT 커스텀 설정
 jwt:

@@ -24,6 +24,7 @@ public class AuthService {
   private long refreshExp;
 
   public String login(String username, String password) {
+    // 임시 우회 인증
     if ("myuser".equals(username) && "123123".equals(password)) {
       String accessToken = jwtProvider.createAccessToken(username);
       String refreshToken = "RT-" + UUID.randomUUID().toString().replaceAll("-", "");
