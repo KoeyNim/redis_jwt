@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.biz.auth.service.CustomUserDetailsService;
+import com.example.demo.biz.member.CustomUserDetailsService;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
