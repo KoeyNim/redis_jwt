@@ -13,9 +13,14 @@
         <div id="app" v-cloak>
             <main class="main-content">
                 <div class="user-info-card">
-                    <p><strong>발급받은 JWT 토큰 (localStorage):</strong></p>
+                    <p><strong>발급받은 Access 토큰:</strong></p>
                     <div class="token-box">
                         {{ token ? token : '토큰이 없습니다.' }}
+                    </div>
+
+                    <p><strong>발급받은 Refresh 토큰:</strong></p>
+                    <div class="token-box">
+                        {{ refreshToken ? refreshToken : '리프레시 토큰이 없습니다.' }}
                     </div>
 
                     <div class="actions">

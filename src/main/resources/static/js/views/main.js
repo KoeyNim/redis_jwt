@@ -4,6 +4,7 @@ const { createApp, ref, onMounted } = Vue;
 const app = createApp({
     setup() {
         const token = ref('');
+        const refreshToken = ref('');
         const userInfo = ref({});
         const boardList = ref([]);
         const errorMessage = ref('');
@@ -20,6 +21,7 @@ const app = createApp({
 
             // 토큰이 존재하면 화면에 표시하기 위해 변수에 담기
             token.value = savedToken;
+            refreshToken.value = localStorage.getItem('refreshToken') || '';
 
             // 필요에 따라 페이지 로딩과 동시에 API 호출 가능
             // fetchUserData();
@@ -30,43 +32,33 @@ const app = createApp({
             errorMessage.value = '';
 
             try {
-                // TODO: 실제 Spring Boot의 보호된 API 경로로 변경하세요. (예: /api/user/me)
-                const response = await fetch('/api/board/list', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token.value}`, // 중요! 발급받은 JWT 토큰을 Header에 담아 보냅니다.
-                        'Content-Type': 'application/json'
-                    }
-                });
+                // 공통 API 유틸리티(api.js)를 사용하여 요청
+                const response = await api.get('/api/board/list');
 
                 if (response.ok) {
                     const data = await response.json();
-                    boardList.value = data; // 응답 데이터(게시판 리스트)를 배열에 저장
-                } else if (response.status === 401 || response.status === 403) {
-                    // 401: 인증 실패 (토큰 만료 등) / 403: 권한 없음
-                    alert('인증이 만료되었거나 권한이 없습니다. 다시 로그인해주세요.');
-                    handleLogout();
+                    boardList.value = data; 
+                } else if (response.status === 403) {
+                    alert('권한이 없습니다.');
                 } else {
                     errorMessage.value = '데이터를 불러오는데 실패했습니다. 상태 코드: ' + response.status;
                 }
             } catch (error) {
                 console.error('API Error:', error);
-                errorMessage.value = '서버 통신 중 오류가 발생했습니다. API 주소를 확인하세요.';
+                errorMessage.value = '서버 통신 중 오류가 발생했습니다.';
             }
         };
 
         // 로그아웃 버튼 클릭 시
         const handleLogout = () => {
-            // localStorage에서 JWT 토큰 삭제
-            localStorage.removeItem('token');
+            api.handleLogout();
             alert('로그아웃 되었습니다.');
-            // 로그인 화면으로 이동
-            window.location.href = '/auth/login';
         };
 
         // 템플릿과 바인딩될 변수/함수 반환
         return {
             token,
+            refreshToken,
             userInfo,
             boardList,
             errorMessage,

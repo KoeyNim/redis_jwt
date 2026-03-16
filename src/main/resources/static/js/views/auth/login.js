@@ -12,31 +12,26 @@ const app = createApp({
         const errorMessage = ref('');
         const isLoading = ref(false);
 
-        // 로그인 처리 함수 주입 (실제 API 주소로 변경 필요)
+        // 로그인 처리
         const handleLogin = async () => {
             // 로딩 상태 시작
             isLoading.value = true;
             errorMessage.value = '';
 
             try {
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(loginForm),
-                });
+                const response = await api.post('/api/auth/login', loginForm);
 
                 if (response.ok) {
-                    // 성공 (실제 코드에서는 응답으로 온 JWT 토큰을 저장해야 함)
-                    const data = await response.text();
-                    localStorage.setItem('token', data);
+                    // 성공 (바뀐 백엔드 스펙에 따라 TokenResponse JSON 파싱)
+                    const data = await response.json();
+
+                    // accessToken과 refreshToken을 각각 저장
+                    localStorage.setItem('token', data.accessToken);
+                    localStorage.setItem('refreshToken', data.refreshToken);
 
                     alert('로그인 성공!');
-                    // 성공 후 메인 페이지로 이동
                     window.location.href = '/main';
                 } else {
-                    // 실패 (예외 처리)
                     errorMessage.value = '아이디 또는 비밀번호가 일치하지 않습니다.';
                 }
             } catch (error) {
@@ -48,7 +43,7 @@ const app = createApp({
             }
         };
 
-        // 템플릿에서 사용할 데이터와 함수를 반환 (setup 문법)
+        // 템플릿에서 사용할 데이터와 함수를 반환
         return {
             title,
             loginForm,

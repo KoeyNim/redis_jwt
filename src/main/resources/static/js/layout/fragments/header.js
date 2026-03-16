@@ -11,27 +11,15 @@
                 const token = localStorage.getItem('token');
                 if (token) {
                     isLoggedIn.value = true;
-                    try {
-                        // JWT 페이로드 파싱 (base64url 디코딩)
-                        const payloadBase64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-                        const jsonPayload = decodeURIComponent(atob(payloadBase64).split('').map(function (c) {
-                            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                        }).join(''));
-                        const decodedPayload = JSON.parse(jsonPayload);
-
-                        if (decodedPayload.sub) {
-                            username.value = decodedPayload.sub;
-                        }
-                    } catch (error) {
-                        console.error("JWT 파싱 오류:", error);
+                    const decodedPayload = api.parseJwt(token);
+                    if (decodedPayload && decodedPayload.sub) {
+                        username.value = decodedPayload.sub;
                     }
                 }
             });
 
             const handleLogout = () => {
-                localStorage.removeItem('token');
-                alert('로그아웃 되었습니다.');
-                window.location.href = '/auth/login';
+                api.handleLogout();
             };
 
             return {
