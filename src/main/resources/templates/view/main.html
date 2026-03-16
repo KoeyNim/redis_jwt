@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
+
+<head>
+    <title layout:fragment="title">메인 화면</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/main.css}">
+    </th:block>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div id="app" v-cloak>
+            <header class="header">
+                <h1>환영합니다!</h1>
+                <button @click="handleLogout" class="logout-button">로그아웃</button>
+            </header>
+
+            <main class="main-content">
+                <div class="user-info-card">
+                    <h2>{{ userInfo.username || '사용자' }}님의 대시보드</h2>
+                    <p><strong>발급받은 JWT 토큰 (localStorage):</strong></p>
+                    <div class="token-box">
+                        {{ token ? token : '토큰이 없습니다.' }}
+                    </div>
+
+                    <div class="actions">
+                        <button @click="fetchUserData" class="action-button">내 정보(보호된 API) 요청하기</button>
+                    </div>
+
+                    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <th:block layout:fragment="script">
+        <script th:src="@{/js/main.js}"></script>
+    </th:block>
+</body>
+
+</html>

@@ -3,14 +3,7 @@
     display: none;
 }
 
-/* style.css의 flex 설정을 덮어쓰고 일반 블록 레벨로 변경 */
-body {
-    display: block;
-    align-items: stretch;
-    justify-content: flex-start;
-    height: auto;
-    min-height: 100vh;
-}
+
 
 /* 상단 헤더 영역 */
 .header {

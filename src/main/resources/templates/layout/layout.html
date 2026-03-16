@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+  <th:block th:insert="~{layout/fragments/resources}"></th:block>
+  <!-- 페이지별 추가 CSS 영역 -->
+  <th:block layout:fragment="css"></th:block>
+</head>
+
+<body>
+  <!-- 공통 헤더 (비어있거나 공통 네비게이션용) -->
+  <div th:replace="~{layout/fragments/header :: header}"></div>
+
+  <!-- 각 페이지의 메인 콘텐츠가 들어갈 영역 (Vue 인스턴스 포함) -->
+  <main class="main-container">
+    <div layout:fragment="content"></div>
+  </main>
+
+  <!-- 공통 푸터 -->
+  <div th:replace="~{layout/fragments/footer :: footer}"></div>
+
+  <!-- 페이지별 추가 스크립트 영역 -->
+  <th:block layout:fragment="script"></th:block>
+</body>
+
+</html>

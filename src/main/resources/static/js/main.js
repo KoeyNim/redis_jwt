@@ -30,7 +30,7 @@ const app = createApp({
 
             try {
                 // TODO: 실제 Spring Boot의 보호된 API 경로로 변경하세요. (예: /api/user/me)
-                const response = await fetch('/api/user/info', {
+                const response = await fetch('/api/board/list', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token.value}`, // 중요! 발급받은 JWT 토큰을 Header에 담아 보냅니다.
