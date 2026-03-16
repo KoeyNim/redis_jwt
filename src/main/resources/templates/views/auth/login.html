@@ -6,6 +6,9 @@
 </head>
 
 <body>
+    <!-- 공통 헤더 숨김 처리 -->
+    <th:block layout:fragment="header"></th:block>
+
     <div layout:fragment="content" class="login-wrapper">
         <div id="app" class="login-container">
             <div class="login-box">
@@ -34,7 +37,7 @@
     </div>
 
     <th:block layout:fragment="script">
-        <script th:src="@{/js/login.js}"></script>
+        <script th:src="@{/js/views/auth/login.js}"></script>
     </th:block>
 </body>
 

@@ -10,6 +10,6 @@ public class AuthController {
 
   @GetMapping({ "login" })
   public String login() {
-    return "view/auth/login";
+    return "views/auth/login";
   }
 }

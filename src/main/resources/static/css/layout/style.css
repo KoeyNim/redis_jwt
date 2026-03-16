@@ -98,3 +98,55 @@ body {
     margin-top: 8px;
     text-align: center;
 }
+
+/* 글로벌 헤더 스타일 */
+.global-header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    margin: 10px;
+}
+
+.global-header-title {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.global-header-greeting {
+    margin-right: 15px;
+}
+
+.global-header-logout-form {
+    display: inline;
+}
+
+.global-header-logout-btn {
+    background-color: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.global-header-logout-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.global-header-login-link {
+    color: white;
+    text-decoration: none;
+    border: 1px solid white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.global-header-login-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}

@@ -13,7 +13,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header h1 {
@@ -98,4 +98,44 @@
     font-size: 14px;
     margin-top: 1rem;
     font-weight: bold;
+}
+
+/* 게시글 목록 스타일 */
+.board-list-container {
+    margin-top: 2rem;
+}
+
+.board-list-container h3 {
+    color: #333;
+}
+
+.board-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.board-item {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    margin-bottom: 0.5rem;
+    padding: 1rem;
+    border-radius: 4px;
+    transition: box-shadow 0.2s;
+}
+
+.board-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.board-title {
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-size: 16px;
+}
+
+.board-contents {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
 }

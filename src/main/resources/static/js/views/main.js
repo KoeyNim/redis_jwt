@@ -5,6 +5,7 @@ const app = createApp({
     setup() {
         const token = ref('');
         const userInfo = ref({});
+        const boardList = ref([]);
         const errorMessage = ref('');
 
         // 화면이 처음 렌더링될 때 실행 (mounted)
@@ -40,8 +41,7 @@ const app = createApp({
 
                 if (response.ok) {
                     const data = await response.json();
-                    userInfo.value = data; // 응답 데이터(유저 정보)를 화면에 반영
-                    alert('정보를 성공적으로 불러왔습니다.');
+                    boardList.value = data; // 응답 데이터(게시판 리스트)를 배열에 저장
                 } else if (response.status === 401 || response.status === 403) {
                     // 401: 인증 실패 (토큰 만료 등) / 403: 권한 없음
                     alert('인증이 만료되었거나 권한이 없습니다. 다시 로그인해주세요.');
@@ -68,6 +68,7 @@ const app = createApp({
         return {
             token,
             userInfo,
+            boardList,
             errorMessage,
             fetchUserData,
             handleLogout

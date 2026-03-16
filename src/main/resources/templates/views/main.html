@@ -4,38 +4,43 @@
 <head>
     <title layout:fragment="title">메인 화면</title>
     <th:block layout:fragment="css">
-        <link rel="stylesheet" th:href="@{/css/main.css}">
+        <link rel="stylesheet" th:href="@{/css/views/main.css}">
     </th:block>
 </head>
 
 <body>
     <div layout:fragment="content">
         <div id="app" v-cloak>
-            <header class="header">
-                <h1>환영합니다!</h1>
-                <button @click="handleLogout" class="logout-button">로그아웃</button>
-            </header>
-
             <main class="main-content">
                 <div class="user-info-card">
-                    <h2>{{ userInfo.username || '사용자' }}님의 대시보드</h2>
                     <p><strong>발급받은 JWT 토큰 (localStorage):</strong></p>
                     <div class="token-box">
                         {{ token ? token : '토큰이 없습니다.' }}
                     </div>
 
                     <div class="actions">
-                        <button @click="fetchUserData" class="action-button">내 정보(보호된 API) 요청하기</button>
+                        <button @click="fetchUserData" class="action-button">게시글 권한요청 (API)</button>
                     </div>
 
                     <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+                    <!-- 게시글 목록 렌더링 영역 -->
+                    <div class="board-list-container" v-if="boardList.length > 0">
+                        <h3>📚 내 게시글 목록</h3>
+                        <ul class="board-list">
+                            <li v-for="(board, index) in boardList" :key="index" class="board-item">
+                                <h4 class="board-title">{{ board.title }}</h4>
+                                <p class="board-contents">{{ board.contents }}</p>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </main>
         </div>
     </div>
 
     <th:block layout:fragment="script">
-        <script th:src="@{/js/main.js}"></script>
+        <script th:src="@{/js/views/main.js}"></script>
     </th:block>
 </body>
 

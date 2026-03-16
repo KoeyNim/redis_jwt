@@ -1,7 +1,26 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <header th:fragment="header">
-    <!-- 사이트 전역으로 사용할 수 있는 헤더가 있다면 여기에 작성합니다. 
-         (Vue로 처리되는 개별 페이지의 헤더는 각 페이지 내부에 유지했습니다.) -->
+  <!-- 사이트 전역으로 사용할 수 있는 헤더 (Vue 인스턴스: header-app) -->
+  <div class="global-header" id="header-app" v-cloak>
+    <h2 class="global-header-title">My Redis JWT App</h2>
+
+    <!-- 로그인 한 사람 영역 (Vue 제어) -->
+    <div v-if="isLoggedIn">
+      <span class="global-header-greeting">환영합니다, <strong>{{ username }}</strong>님!</span>
+      <button @click="handleLogout" class="global-header-logout-btn">
+        로그아웃
+      </button>
+    </div>
+
+    <!-- 로그인 안 한 사람 영역 (Vue 제어) -->
+    <div v-else>
+      <a th:href="@{/auth/login}" class="global-header-login-link">로그인 페이지로</a>
+    </div>
+  </div>
+
+  <!-- 새로 분리된 Vue 스크립트 파일 로드 -->
+  <script th:src="@{/js/layout/fragments/header.js}"></script>
 </header>
+
 </html>
