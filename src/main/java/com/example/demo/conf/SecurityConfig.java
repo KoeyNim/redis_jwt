@@ -1,5 +1,6 @@
 package com.example.demo.conf;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,17 +23,17 @@ public class SecurityConfig {
 
   @Bean
   SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-      http
-          .csrf(csrf -> csrf.disable())
-          .sessionManagement(session -> session
-              .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-          .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**", "/error").permitAll()
-            .anyRequest().authenticated()
-          )
-          .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-      
-      return http.build();
+    http
+        .csrf(csrf -> csrf.disable())
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+            .requestMatchers("/api/auth/**", "/auth/login", "/error", "/main").permitAll()
+            .anyRequest().authenticated())
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+    return http.build();
   }
 
   @Bean

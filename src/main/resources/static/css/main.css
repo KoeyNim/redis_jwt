@@ -1,0 +1,108 @@
+/* 스타일 적용 전 화면 깜빡임 방지 */
+[v-cloak] {
+    display: none;
+}
+
+/* style.css의 flex 설정을 덮어쓰고 일반 블록 레벨로 변경 */
+body {
+    display: block;
+    align-items: stretch;
+    justify-content: flex-start;
+    height: auto;
+    min-height: 100vh;
+}
+
+/* 상단 헤더 영역 */
+.header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+    font-size: 20px;
+}
+
+/* 로그아웃 버튼 */
+.logout-button {
+    background-color: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.logout-button:hover {
+    background-color: white;
+    color: #4CAF50;
+}
+
+/* 메인 컨텐츠 영역 */
+.main-content {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* 정보 카드 레이아웃 */
+.user-info-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.user-info-card h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+/* 토큰 표시 영역 */
+.token-box {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+    word-break: break-all;
+    font-family: monospace;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.4;
+}
+
+/* 액션 버튼 영역 */
+.actions {
+    margin-top: 1rem;
+}
+
+.action-button {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.action-button:hover {
+    background-color: #1976D2;
+}
+
+/* 오류 메시지 (기존 style.css 재사용) */
+.error-message {
+    color: #f44336;
+    font-size: 14px;
+    margin-top: 1rem;
+    font-weight: bold;
+}

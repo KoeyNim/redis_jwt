@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.biz.auth.dto.AuthRequest;
 import com.example.demo.biz.member.CustomUserDetailsService;
 import com.example.demo.jwt.JwtProvider;
 
@@ -30,19 +31,19 @@ public class AuthService {
   @Value("${jwt.refresh-expiration}")
   private long refreshExp;
 
-  public String login(String username, String password) {
+  public String login(AuthRequest req) {
     // 임시 우회 인증
-    UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-    if (!bCryptPasswordEncoder.matches(password, userDetails.getPassword())) {
+    UserDetails userDetails = customUserDetailsService.loadUserByUsername(req.getUsername());
+    if (!bCryptPasswordEncoder.matches(req.getPassword(), userDetails.getPassword())) {
       throw new RuntimeException("아이디 또는 비밀번호가 틀렸습니다.");
     }
 
-    String accessToken = jwtProvider.createAccessToken(username);
+    String accessToken = jwtProvider.createAccessToken(req.getUsername());
     String refreshToken = "RT-" + UUID.randomUUID().toString().replaceAll("-", "");
 
     // refreshToken 저장
     redisTemplate.opsForValue().set(
-        "RT:" + username,
+        "RT:" + req.getUsername(),
         refreshToken,
         refreshExp, TimeUnit.MILLISECONDS);
     return accessToken;

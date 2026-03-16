@@ -1,15 +1,15 @@
-package com.example.demo.biz.auth.controller;
+package com.example.demo.biz.main.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("auth")
-public class AuthController {
+@RequestMapping({ "/main" })
+public class MainController {
 
-  @GetMapping({ "login" })
-  public String login() {
-    return "login";
-  }
+    @GetMapping
+    public String main() {
+        return "main";
+    }
 }
