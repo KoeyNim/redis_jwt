@@ -14,17 +14,32 @@ const api = {
     },
 
     // 로그아웃 및 세션 종료
-    handleLogout() {
+    async handleLogout() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const decoded = this.parseJwt(token);
+                if (decoded && decoded.sub) {
+                    // 백엔드에 리프레시 토큰 삭제 요청 (비동기로 던져두기)
+                    await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: decoded.sub })
+                    });
+                }
+            } catch (e) {
+                console.error("Logout API call failed:", e);
+            }
+        }
+
         localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+        alert('로그아웃 되었습니다.');
         window.location.href = '/auth/login';
     },
 
     // 공통 요청 함수
     async request(url, options = {}) {
         const token = localStorage.getItem('token');
-        const refreshToken = localStorage.getItem('refreshToken');
 
         // 헤더 설정
         options.headers = {
@@ -40,7 +55,7 @@ const api = {
             let response = await fetch(url, options);
 
             // 401 Unauthorized: 액세스 토큰 만료 가능성
-            if (response.status === 401 && refreshToken) {
+            if (response.status === 401) {
                 console.log("Access Token 만료. Refresh 시도...");
 
                 const decoded = this.parseJwt(token);
@@ -54,21 +69,24 @@ const api = {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        username: decoded.sub,
-                        refreshToken: refreshToken
+                        username: decoded.sub
+                        // refreshToken은 HttpOnly 쿠키로 전송됨
                     })
                 });
 
                 if (refreshRes.ok) {
-                    const data = await refreshRes.json();
-                    localStorage.setItem('token', data.accessToken);
-                    localStorage.setItem('refreshToken', data.refreshToken);
+                    const result = await refreshRes.json();
+                    if (result.success) {
+                        localStorage.setItem('token', result.data);
+                        console.log("Token 재발급 성공. 원래 요청 재시도.");
 
-                    console.log("Token 재발급 성공. 원래 요청 재시도.");
-
-                    // 새 토큰으로 헤더 교체 후 재요청
-                    options.headers['Authorization'] = `Bearer ${data.accessToken}`;
-                    return await fetch(url, options);
+                        // 새 토큰으로 헤더 교체 후 재요청
+                        options.headers['Authorization'] = `Bearer ${result.data}`;
+                        return await fetch(url, options);
+                    } else {
+                        console.error("Token refresh failed:", result.message);
+                        this.handleLogout();
+                    }
                 } else {
                     // 리프레시 토큰도 만료된 경우
                     this.handleLogout();

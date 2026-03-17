@@ -5,16 +5,17 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.biz.auth.dto.AuthRequest;
-import com.example.demo.biz.auth.dto.RefreshRequest;
-import com.example.demo.biz.auth.dto.TokenResponse;
 import com.example.demo.biz.member.CustomUserDetailsService;
 import com.example.demo.jwt.JwtProvider;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -33,7 +34,7 @@ public class AuthService {
   @Value("${jwt.refresh-expiration}")
   private long refreshExp;
 
-  public TokenResponse login(AuthRequest req) {
+  public String login(AuthRequest req, HttpServletResponse httpRes) {
     // 임시 우회 인증
     UserDetails userDetails = customUserDetailsService.loadUserByUsername(req.getUsername());
     if (!bCryptPasswordEncoder.matches(req.getPassword(), userDetails.getPassword())) {
@@ -48,31 +49,37 @@ public class AuthService {
         "RT:" + req.getUsername(),
         refreshToken,
         refreshExp, TimeUnit.MILLISECONDS);
-        
-    return TokenResponse.builder()
-        .accessToken(accessToken)
-        .refreshToken(refreshToken)
-        .build();
+
+    setRefreshTokenCookie(httpRes, refreshToken, refreshExp / 1000);
+    return accessToken;
   }
 
-  public TokenResponse refresh(RefreshRequest req) {
-    // 1. Redis에서 사용자의 저장된 Refresh Token 조회
-    String redisKey = "RT:" + req.getUsername();
-    String savedRefreshToken = (String) redisTemplate.opsForValue().get(redisKey);
+  public void logout(String username, HttpServletResponse httpRes) {
+    // Redis에서 해당 사용자의 Refresh Token 삭제
+    redisTemplate.delete("RT:" + username);
+    // Refresh Token 쿠키 삭제
+    setRefreshTokenCookie(httpRes, null, 0);
+  }
 
-    // 2. 검증: 만료되었거나 일치하지 않으면 예외 발생
-    if (savedRefreshToken == null || !savedRefreshToken.equals(req.getRefreshToken())) {
+  public String refresh(String username, String refreshToken, HttpServletResponse httpRes) {
+    // Redis에서 사용자의 저장된 Refresh Token 조회
+    String refreshTokenInRedis = (String) redisTemplate.opsForValue().get("RT:" + username);
+    // 검증: 만료되었거나 일치하지 않으면 예외 발생
+    if (refreshTokenInRedis == null || !refreshTokenInRedis.equals(refreshToken)) {
       throw new RuntimeException("Refresh Token이 만료되었거나 유효하지 않습니다. 다시 로그인해주세요.");
     }
+    // 새로운 Access Token 발급
+    return jwtProvider.createAccessToken(username);
+  }
 
-    // 3. 새로운 Access Token 발급
-    String newAccessToken = jwtProvider.createAccessToken(req.getUsername());
-
-    // 4. (선택적) Refresh Token Rotation - 기존걸 지우고 새로 발급할 수도 있음 (여기선 유지)
-    
-    return TokenResponse.builder()
-        .accessToken(newAccessToken)
-        .refreshToken(req.getRefreshToken()) // 기존거 그대로 반환 (연장)
+  private void setRefreshTokenCookie(HttpServletResponse httpRes, String token, long maxAge) {
+    ResponseCookie cookie = ResponseCookie.from("refreshToken", token)
+        .httpOnly(true)
+        .secure(false) // 개발 환경이므로 false, 운영은 true 권장 (SSL 인증서(HTTPS) 적용시 true)
+        .path("/api") // 쿠키가 전송될 유효한 URL 경로
+        .maxAge(maxAge)
+        .sameSite("Lax")
         .build();
+    httpRes.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
   }
 }

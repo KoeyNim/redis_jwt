@@ -21,18 +21,16 @@ const app = createApp({
             try {
                 const response = await api.post('/api/auth/login', loginForm);
 
-                if (response.ok) {
-                    // 성공 (바뀐 백엔드 스펙에 따라 TokenResponse JSON 파싱)
-                    const data = await response.json();
+                const res = await response.json();
 
-                    // accessToken과 refreshToken을 각각 저장
-                    localStorage.setItem('token', data.accessToken);
-                    localStorage.setItem('refreshToken', data.refreshToken);
+                if (res.success) {
+                    // 성공 (ApiResponse의 data 필드에서 토큰 추출)
+                    localStorage.setItem('token', res.data);
 
                     alert('로그인 성공!');
                     window.location.href = '/main';
                 } else {
-                    errorMessage.value = '아이디 또는 비밀번호가 일치하지 않습니다.';
+                    errorMessage.value = res.message || '아이디 또는 비밀번호가 일치하지 않습니다.';
                 }
             } catch (error) {
                 console.error('Login error:', error);
