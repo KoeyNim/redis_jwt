@@ -14,7 +14,8 @@ public enum BoardEnum {
   BOARD_1("1", "제목1", "내용1", "myuser"),
   BOARD_2("2", "제목2", "내용2", "myuser"),
   BOARD_3("3", "제목3", "내용3", "user2"),
-  BOARD_4("4", "제목4", "내용4", "user2");
+  BOARD_4("4", "제목4", "내용4", "user2"),
+  BOARD_5("5", "공지사항", "관리자 공지사항입니다.", "admin");
 
   private final String id;
   private final String title;

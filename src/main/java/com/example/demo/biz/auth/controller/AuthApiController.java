@@ -1,8 +1,6 @@
 package com.example.demo.biz.auth.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,16 +29,17 @@ public class AuthApiController {
   }
 
   @PostMapping("logout")
-  public ResponseEntity<ApiResponse<Void>> logout(@AuthenticationPrincipal UserDetails userDetails, HttpServletResponse httpRes) {
-    service.logout(userDetails.getUsername(), httpRes);
+  public ResponseEntity<ApiResponse<Void>> logout(
+      @CookieValue(name = "refreshToken", required = false) String refreshToken,
+      HttpServletResponse httpRes) {
+    service.logout(refreshToken, httpRes);
     return ResponseEntity.ok(ApiResponse.success(null));
   }
 
   @PostMapping("refresh")
   public ResponseEntity<ApiResponse<String>> refresh(
-      @AuthenticationPrincipal UserDetails userDetails,
       @CookieValue(name = "refreshToken", required = false) String refreshToken,
       HttpServletResponse httpRes) {
-    return ResponseEntity.ok(ApiResponse.success(service.refresh(userDetails.getUsername(), refreshToken, httpRes)));
+    return ResponseEntity.ok(ApiResponse.success(service.refresh(refreshToken, httpRes)));
   }
 }

@@ -29,10 +29,13 @@ public class JwtProvider {
   @Value("${jwt.access-expiration}")
   private long accessTokenExp;
 
+  @Value("${jwt.refresh-expiration}")
+  private long refreshTokenExp;
+
   private SecretKey secretKey;
-  
+
   private final CustomUserDetailsService customUserDetailsService;
-  
+
   @PostConstruct
   protected void init() {
     this.secretKey = Keys.hmacShaKeyFor(salt.getBytes(StandardCharsets.UTF_8));
@@ -50,34 +53,46 @@ public class JwtProvider {
         .compact();
   }
 
+  // refresh token 생성
+  public String createRefreshToken(String username) {
+    Date now = new Date();
+    Date exp = new Date(now.getTime() + refreshTokenExp);
+    return Jwts.builder()
+        .subject(username)
+        .issuedAt(now)
+        .expiration(exp)
+        .signWith(secretKey)
+        .compact();
+  }
+
   public SecretKey getSecretKey() {
     return this.secretKey;
   }
 
   public String getUserPk(String token) {
     return Jwts.parser()
-            .verifyWith(secretKey)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
-            .getSubject();
+        .verifyWith(secretKey)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload()
+        .getSubject();
   }
 
   public Authentication getAuthentication(String token) {
-      UserDetails userDetails = customUserDetailsService.loadUserByUsername(this.getUserPk(token));
-      return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    UserDetails userDetails = customUserDetailsService.loadUserByUsername(this.getUserPk(token));
+    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
   }
 
   // 토큰 검증
   public boolean validateToken(String jwtToken) {
     try {
-        Jwts.parser()
-            .verifyWith(secretKey)
-            .build()
-            .parseSignedClaims(jwtToken);
-        return true;
+      Jwts.parser()
+          .verifyWith(secretKey)
+          .build()
+          .parseSignedClaims(jwtToken);
+      return true;
     } catch (JwtException | IllegalArgumentException e) {
-        return false;
+      return false;
     }
   }
 }

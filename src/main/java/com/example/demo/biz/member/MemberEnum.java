@@ -10,8 +10,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum MemberEnum {
 
+  ADMIN1("admin", "$2a$10$u5rWSXWNTZtRsivtPTUBlO954TvdrvrrYZeVPqv4OY/4ZdMU8bJ6G", "ADMIN"), // pw 1245678
+
   USER1("myuser", "$2a$10$tywLwuQxfBUqGjTKFqesLeaOEzbKeJTPh92yImATStTj50sAHNHN2", "USER"), // pw 123123
-  USER2("user2", "$2a$10$u5rWSXWNTZtRsivtPTUBlO954TvdrvrrYZeVPqv4OY/4ZdMU8bJ6G", "USER"); // pw 1245678
+  USER2("user2", "$2a$10$u5rWSXWNTZtRsivtPTUBlO954TvdrvrrYZeVPqv4OY/4ZdMU8bJ6G", "USER"), // pw 1245678
+  ;
 
   private final String username;
   private final String password;

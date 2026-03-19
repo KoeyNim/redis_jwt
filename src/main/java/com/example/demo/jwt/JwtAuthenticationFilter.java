@@ -18,28 +18,36 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private final JwtProvider jwtProvider;
+    private final JwtProvider jwtProvider;
 
-  @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-      // 헤더에서 토큰 추출
-      String token = resolveToken(request);
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        // /api로 시작하지 않는 모든 요청은 이 필터를 타지 않음
+        return !path.startsWith("/api");
+    }
 
-      // 토큰이 유효하면 인증 정보를 세팅
-      if (token != null && jwtProvider.validateToken(token)) {
-          Authentication auth = jwtProvider.getAuthentication(token);
-          SecurityContextHolder.getContext().setAuthentication(auth);
-      }
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        
+        String token = resolveToken(request);
 
-      filterChain.doFilter(request, response);
-  }
+        // API용 토큰 검증 및 인증 정보 세팅
+        if (token != null && jwtProvider.validateToken(token)) {
+            Authentication auth = jwtProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        }
 
-  private String resolveToken(HttpServletRequest request) {
-      String bearerToken = request.getHeader("Authorization");
-      if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-          return bearerToken.substring(7);
-      }
-      return null;
-  }
+        filterChain.doFilter(request, response);
+    }
+
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
 
 }

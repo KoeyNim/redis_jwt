@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.example.demo.exception.SecurityExceptionHandler;
 import com.example.demo.jwt.JwtAuthenticationFilter;
+import com.example.demo.jwt.PageAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final PageAuthenticationFilter pageAuthenticationFilter;
   private final SecurityExceptionHandler securityExceptionHandler;
 
   @Bean
@@ -34,9 +36,11 @@ public class SecurityConfig {
             .accessDeniedHandler(securityExceptionHandler))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-            .requestMatchers("/api/auth/**", "/error", "/auth/login", "/main").permitAll()
+            .requestMatchers("/", "/error", "/api/auth/**", "/auth/login").permitAll()
             .anyRequest().authenticated())
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        // 필터 순서 : JwtAuthenticationFilter -> PageAuthenticationFilter
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(pageAuthenticationFilter, JwtAuthenticationFilter.class);
 
     return http.build();
   }

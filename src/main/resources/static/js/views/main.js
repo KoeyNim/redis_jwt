@@ -13,11 +13,6 @@ const app = createApp({
         onMounted(() => {
             // localStorage에 저장된 토큰이 있는지 확인
             const savedToken = localStorage.getItem('token');
-            if (!savedToken) {
-                alert('로그인이 필요합니다.');
-                window.location.href = '/auth/login'; // 토큰이 없으면 로그인 화면으로 이동
-                return;
-            }
 
             // 토큰이 존재하면 화면에 표시하기 위해 변수에 담기
             token.value = savedToken;
@@ -37,7 +32,7 @@ const app = createApp({
 
                 if (response.ok) {
                     const data = await response.json();
-                    boardList.value = data; 
+                    boardList.value = data;
                 } else if (response.status === 403) {
                     alert('권한이 없습니다.');
                 } else {

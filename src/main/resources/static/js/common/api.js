@@ -22,12 +22,8 @@ const api = {
             try {
                 const decoded = me.parseJwt(token);
                 if (decoded && decoded.sub) {
-                    // 백엔드에 리프레시 토큰 삭제 요청 (비동기로 던져두기)
-                    await fetch('/api/auth/logout', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: decoded.sub })
-                    });
+                    // 백엔드에 리프레시 토큰 삭제 요청
+                    await fetch('/api/auth/logout', { method: 'POST' });
                 }
             } catch (e) {
                 console.error("Logout API call failed:", e);
@@ -39,6 +35,7 @@ const api = {
     },
     // 공통 요청 함수
     async request(url, options = {}) {
+        const me = this;
         const token = localStorage.getItem('token');
         // 헤더 설정
         options.headers = {
@@ -59,14 +56,7 @@ const api = {
                     return;
                 }
                 // 토큰 재발급 요청
-                const refreshRes = await fetch('/api/auth/refresh', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username: decoded.sub
-                        // refreshToken은 HttpOnly 쿠키로 전송됨
-                    })
-                });
+                const refreshRes = await fetch('/api/auth/refresh', { method: 'POST' });
                 if (refreshRes.ok) {
                     const result = await refreshRes.json();
                     if (result.success) {

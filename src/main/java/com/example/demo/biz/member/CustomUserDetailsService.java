@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-  // 임시 유저 객체 생성 DB 사용 X
+  // 임시 유저 객체 생성 (DB 사용 X)
   @Override
   public UserDetails loadUserByUsername(String username) {
     for (MemberEnum member : MemberEnum.values()) {
